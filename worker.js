@@ -7,12 +7,11 @@ export default {
 async function handleRequest(request) {
   const url = new URL(request.url);
   const pathParts = url.pathname.split("/").filter((part) => part);
-  
+
   // 获取查询参数
-  const customColor = url.searchParams.get('color');
-  const customLabel = url.searchParams.get('label');
-  const style = url.searchParams.get('style') || 'flat';
- 
+  const customColor = url.searchParams.get("color");
+  const customLabel = url.searchParams.get("label");
+  const style = url.searchParams.get("style") || "flat";
 
   // 处理根路径，返回使用说明
   if (pathParts.length === 0) {
@@ -24,14 +23,23 @@ Usage: /owner/repo[/tag][?color=COLOR&label=LABEL&style=STYLE]
 
 Examples: 
   /bestK/xiaoha-battery-widget (all releases)
+  /bestK/xiaoha-battery-widget/latest (latest release)
   /bestK/xiaoha-battery-widget/v1.0.0 (specific tag)
   /bestK/xiaoha-battery-widget?color=blue (custom color)
   /bestK/xiaoha-battery-widget?color=ff69b4&label=下载量 (custom color and label)
+
+Tag Options:
+  - No tag: Shows total downloads across all releases
+  - latest: Shows downloads for the latest release (displays actual version number)
+  - Specific tag: Shows downloads for that specific release (e.g., v1.0.0)
 
 Query Parameters:
   - color: Custom color (hex without #, or predefined: red, green, blue, yellow, orange, purple, pink, gray)
   - label: Custom label text (default: "downloads" or "tag downloads")
   - style: Badge style (flat, flat-square, plastic) - default: flat
+
+Note: When using 'latest', the badge will display the actual version number (e.g., "v1.2.3 downloads") 
+instead of "latest downloads" for better clarity.
 
 Replace with your repository owner, name, and optional tag.
     `,
@@ -56,8 +64,13 @@ Replace with your repository owner, name, and optional tag.
     // 构建 GitHub API URL
     let githubUrl;
     if (tag) {
-      // 查询特定 tag 的 release
-      githubUrl = `https://api.github.com/repos/${owner}/${repo}/releases/tags/${tag}`;
+      if (tag.toLowerCase() === "latest") {
+        // 查询最新的 release
+        githubUrl = `https://api.github.com/repos/${owner}/${repo}/releases/latest`;
+      } else {
+        // 查询特定 tag 的 release
+        githubUrl = `https://api.github.com/repos/${owner}/${repo}/releases/tags/${tag}`;
+      }
     } else {
       // 查询所有 releases
       githubUrl = `https://api.github.com/repos/${owner}/${repo}/releases`;
@@ -90,16 +103,19 @@ Replace with your repository owner, name, and optional tag.
 
     // 计算下载次数
     let totalDownloads = 0;
-    let releaseInfo = "";
+    let actualTag = tag;
 
     if (tag) {
-      // 单个 release 的情况
+      // 单个 release 的情况（包括 latest）
       if (data.assets && Array.isArray(data.assets)) {
         data.assets.forEach((asset) => {
           totalDownloads += asset.download_count || 0;
         });
       }
-      releaseInfo = tag;
+      // 如果是 latest 标签，使用实际的标签名
+      if (tag.toLowerCase() === "latest" && data.tag_name) {
+        actualTag = data.tag_name;
+      }
     } else {
       // 所有 releases 的情况
       if (Array.isArray(data)) {
@@ -111,7 +127,6 @@ Replace with your repository owner, name, and optional tag.
           }
         });
       }
-      releaseInfo = "total";
     }
 
     // 格式化下载次数
@@ -139,7 +154,16 @@ Replace with your repository owner, name, and optional tag.
     if (customLabel) {
       label = customLabel;
     } else {
-      label = tag ? `${tag} downloads` : "downloads";
+      if (tag) {
+        // 如果是 latest 标签，显示实际的标签名
+        if (tag.toLowerCase() === "latest") {
+          label = `${actualTag} downloads`;
+        } else {
+          label = `${tag} downloads`;
+        }
+      } else {
+        label = "downloads";
+      }
     }
 
     // 生成 SVG 徽章
@@ -179,22 +203,22 @@ function formatDownloadCount(count) {
 function parseColor(colorParam) {
   // 预定义颜色
   const predefinedColors = {
-    red: '#e05d44',
-    green: '#4c1',
-    blue: '#007ec6',
-    yellow: '#dfb317',
-    orange: '#fe7d37',
-    purple: '#9f9f9f',
-    pink: '#ff69b4',
-    gray: '#9f9f9f',
-    grey: '#9f9f9f',
-    brightgreen: '#4c1',
-    lightgrey: '#9f9f9f',
-    success: '#4c1',
-    important: '#fe7d37',
-    critical: '#e05d44',
-    informational: '#007ec6',
-    inactive: '#9f9f9f'
+    red: "#e05d44",
+    green: "#4c1",
+    blue: "#007ec6",
+    yellow: "#dfb317",
+    orange: "#fe7d37",
+    purple: "#9f9f9f",
+    pink: "#ff69b4",
+    gray: "#9f9f9f",
+    grey: "#9f9f9f",
+    brightgreen: "#4c1",
+    lightgrey: "#9f9f9f",
+    success: "#4c1",
+    important: "#fe7d37",
+    critical: "#e05d44",
+    informational: "#007ec6",
+    inactive: "#9f9f9f",
   };
 
   // 如果是预定义颜色
@@ -218,21 +242,21 @@ function parseColor(colorParam) {
   }
 
   // 默认返回绿色
-  return '#4c1';
+  return "#4c1";
 }
 
-function generateBadgeSVG(label, value, color, style = 'flat') {
+function generateBadgeSVG(label, value, color, style = "flat") {
   const labelWidth = Math.max(label.length * 6 + 10, 40);
   const valueWidth = Math.max(value.length * 6 + 10, 40);
   const totalWidth = labelWidth + valueWidth;
-  
+
   // 根据样式调整
   let rx = 3; // 圆角
   let gradientOpacity = 0.1;
-  
-  if (style === 'flat-square') {
+
+  if (style === "flat-square") {
     rx = 0;
-  } else if (style === 'plastic') {
+  } else if (style === "plastic") {
     gradientOpacity = 0.2;
   }
 

@@ -19,10 +19,19 @@ Replace your domain with the deployed Worker domain, supporting the following fo
 
 ```
 https://your-worker-domain.com/owner/repo                    # Total downloads for all releases
+https://your-worker-domain.com/owner/repo/latest             # Downloads for latest release
 https://your-worker-domain.com/owner/repo/tag                # Downloads for specific tag
 https://your-worker-domain.com/owner/repo?color=blue         # Custom color
 https://your-worker-domain.com/owner/repo?color=ff69b4&label=Downloads  # Custom color and label
 ```
+
+### Tag Options
+
+-   **No tag**: Shows total downloads across all releases
+-   **`latest`**: Shows downloads for the latest release (displays actual version number)
+-   **Specific tag**: Shows downloads for that specific release (e.g., `v1.0.0`)
+
+> **Note**: When using `latest`, the badge will display the actual version number (e.g., "v1.2.3 downloads") instead of "latest downloads" for better clarity.
 
 ### Query Parameters
 
@@ -49,6 +58,9 @@ Badge URLs:
 # Total downloads for all releases
 https://gh-down-badges.linkof.link/bestK/xiaoha-battery-widget
 
+# Downloads for latest release
+https://gh-down-badges.linkof.link/bestK/xiaoha-battery-widget/latest
+
 # Downloads for specific version
 https://gh-down-badges.linkof.link/bestK/xiaoha-battery-widget/v1.0.0
 
@@ -69,6 +81,10 @@ https://gh-down-badges.linkof.link/bestK/xiaoha-battery-widget?style=flat-square
 
 ![Downloads](https://gh-down-badges.linkof.link/bestK/xiaoha-battery-widget)
 
+<!-- Latest release downloads -->
+
+![Latest Downloads](https://gh-down-badges.linkof.link/bestK/xiaoha-battery-widget/latest)
+
 <!-- Specific version downloads -->
 
 ![v1.0.0 Downloads](https://gh-down-badges.linkof.link/bestK/xiaoha-battery-widget/v1.0.0)
@@ -87,6 +103,9 @@ https://gh-down-badges.linkof.link/bestK/xiaoha-battery-widget?style=flat-square
 ```html
 <!-- Total downloads -->
 <img src="https://gh-down-badges.linkof.link/bestK/xiaoha-battery-widget" alt="Downloads" />
+
+<!-- Latest release downloads -->
+<img src="https://gh-down-badges.linkof.link/bestK/xiaoha-battery-widget/latest" alt="Latest Downloads" />
 
 <!-- Specific version downloads -->
 <img src="https://gh-down-badges.linkof.link/bestK/xiaoha-battery-widget/v1.0.0" alt="v1.0.0 Downloads" />
