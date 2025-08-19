@@ -246,8 +246,24 @@ function parseColor(colorParam) {
 }
 
 function generateBadgeSVG(label, value, color, style = "flat") {
-  const labelWidth = Math.max(label.length * 6 + 10, 40);
-  const valueWidth = Math.max(value.length * 6 + 10, 40);
+  // 更精确的文字宽度计算
+  const getTextWidth = (text) => {
+    // 根据字符类型计算更准确的宽度
+    let width = 0;
+    for (let char of text) {
+      if (/[a-zA-Z0-9]/.test(char)) {
+        width += 6; // 英文数字
+      } else if (/[\u4e00-\u9fff]/.test(char)) {
+        width += 11; // 中文字符
+      } else {
+        width += 4; // 其他字符
+      }
+    }
+    return width;
+  };
+
+  const labelWidth = Math.max(getTextWidth(label) + 10, 40);
+  const valueWidth = Math.max(getTextWidth(value) + 10, 40);
   const totalWidth = labelWidth + valueWidth;
 
   // 根据样式调整
@@ -274,10 +290,10 @@ function generateBadgeSVG(label, value, color, style = "flat") {
       <path fill="url(#b)" d="M0 0h${totalWidth}v20H0z"/>
     </g>
     <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="110">
-      <text x="${(labelWidth / 2) * 10}" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="${Math.max(label.length * 6, 30) * 10}">${label}</text>
-      <text x="${(labelWidth / 2) * 10}" y="140" transform="scale(.1)" textLength="${Math.max(label.length * 6, 30) * 10}">${label}</text>
-      <text x="${(labelWidth + valueWidth / 2) * 10}" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="${Math.max(value.length * 6, 30) * 10}">${value}</text>
-      <text x="${(labelWidth + valueWidth / 2) * 10}" y="140" transform="scale(.1)" textLength="${Math.max(value.length * 6, 30) * 10}">${value}</text>
+      <text x="${(labelWidth / 2) * 10}" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)">${label}</text>
+      <text x="${(labelWidth / 2) * 10}" y="140" transform="scale(.1)">${label}</text>
+      <text x="${(labelWidth + valueWidth / 2) * 10}" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)">${value}</text>
+      <text x="${(labelWidth + valueWidth / 2) * 10}" y="140" transform="scale(.1)">${value}</text>
     </g>
   </svg>`;
 }
