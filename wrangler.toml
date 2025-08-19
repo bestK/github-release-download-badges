@@ -1,0 +1,11 @@
+name = "github-downloads-badge"
+main = "worker.js"
+compatibility_date = "2023-05-12"
+
+[env.production]
+name = "github-downloads-badge"
+
+# 可选：自定义域名配置
+# [[env.production.routes]]
+# pattern = "your-domain.com/*"
+# zone_name = "your-domain.com"

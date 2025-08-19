@@ -1,0 +1,23 @@
+{
+  "name": "github-downloads-badge",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for GitHub Release downloads badge",
+  "main": "worker.js",
+  "scripts": {
+    "dev": "npx wrangler dev",
+    "deploy": "npx wrangler deploy",
+    "update-wrangler": "npm install --save-dev wrangler@latest"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "github",
+    "badge",
+    "downloads"
+  ],
+  "author": "",
+  "license": "MIT"
+}
